@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#fbfbfd">
+<title>西行漫记 · 从新乡到拉萨</title>
+<meta name="description" content="2026年7月11日到8月17日，三十八天，三千六百五十公里。一个十九岁的人，一辆自行车，从新乡骑到拉萨。">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%235b7cfa'/><g fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='10' cy='21' r='5'/><circle cx='23' cy='21' r='5'/><path d='M10 21 L15.5 11 L22.5 11 M15.5 11 L20.5 21'/></g></svg>">
+<link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-mode="timeline">
+
+<div class="scrollbar" id="scrollbar"></div>
+
+<header class="nav" id="nav">
+  <div class="nav-in">
+    <a class="brand" href="#top"><span class="brand-dot"></span><span>西行漫记</span></a>
+    <nav class="navlinks">
+      <a href="#pre">前传</a>
+      <a href="#story">逐日</a>
+      <a href="#mapsec">轨迹</a>
+      <a href="#mountains">山</a>
+      <a href="#feeling">感悟</a>
+    </nav>
+    <div class="navright">
+      <div class="seg" id="seg">
+        <span class="seg-thumb" id="segThumb"></span>
+        <button type="button" data-mode="timeline" class="on">时间轴</button>
+        <button type="button" data-mode="single">单日</button>
+      </div>
+      <button class="datebtn" id="dateBtn" type="button" title="选择日期">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+        <span id="dateLabel">选日期</span>
+        <input type="date" id="dateInput" min="2026-07-11" max="2026-08-17" value="2026-07-11" aria-label="选择日期">
+      </button>
+    </div>
+  </div>
+  <div class="chips" id="chips" aria-label="按日期浏览"></div>
+</header>
+
+<main>
+  <section class="hero" id="top">
+    <div class="hero-in">
+      <p class="eyebrow">2026.7.11 — 2026.8.17 · 一个人的 318</p>
+      <h1 class="hero-title">西行漫记</h1>
+      <p class="hero-sub">从新乡到拉萨，一个人，一辆车。<br>三十八天，三千六百五十公里。</p>
+      <p class="hero-quote">“逝去的过往，就别再回头望。”</p>
+
+      <ul class="stats" id="stats"></ul>
+
+      <div class="profile" id="profile">
+        <div class="profile-head">
+          <h2>海拔剖面</h2>
+          <p>把鼠标放到曲线上，看看每一天骑在什么高度上；点一下，就跳到那天。</p>
+        </div>
+        <div class="profile-stage" id="profileStage"></div>
+      </div>
+
+      <div class="ribbon" id="ribbon"></div>
+    </div>
+  </section>
+
+  <section class="sec" id="pre">
+    <div class="sec-head">
+      <p class="sec-eyebrow">Before</p>
+      <h2 class="sec-title">前传</h2>
+      <p class="sec-desc">出发之前，这件事已经在心里放了很久。</p>
+    </div>
+    <article class="prose" id="preText"></article>
+  </section>
+
+  <section class="sec" id="story">
+    <div class="sec-head">
+      <p class="sec-eyebrow">Journal</p>
+      <h2 class="sec-title">逐日</h2>
+      <p class="sec-desc">三十八天，一天一篇。从 7 月 11 日下午出发，到 8 月 17 日站在布达拉宫前面。</p>
+    </div>
+    <div class="tl" id="tl">
+      <aside class="rail" id="rail"></aside>
+      <div class="tl-main" id="tlMain"></div>
+    </div>
+  </section>
+
+  <section class="sec single" id="single" hidden>
+    <div class="single-bar">
+      <button class="navbtn" id="prevDay" type="button" aria-label="前一天">‹</button>
+      <div class="single-pos"><b id="singlePos">第 1 / 38 天</b><span id="singleRoute">新乡 → 郑州</span></div>
+      <button class="navbtn" id="nextDay" type="button" aria-label="后一天">›</button>
+    </div>
+    <article class="single-card" id="singleCard"></article>
+  </section>
+
+  <section class="sec" id="mapsec">
+    <div class="sec-head">
+      <p class="sec-eyebrow">Route</p>
+      <h2 class="sec-title">骑行轨迹</h2>
+      <p class="sec-desc">把三千六百五十公里摊在卫星地图上。点轨迹上任意一段，或者点路上的任意一座城，就跳到那天的日记。</p>
+    </div>
+    <div class="mapwrap">
+      <div class="mapshell">
+        <div id="mapCanvas"></div>
+        <div class="mapload" id="mapLoad"><span class="spin"></span>正在载入卫星地图…</div>
+        <div class="mapbad" id="mapBad" hidden>卫星底图需要联网，轨迹仍可查看</div>
+      </div>
+      <div class="mapbar">
+        <div class="mapinfo"><b id="mapHint">7月11日 · 第 1 天</b><span id="mapHintSub">新乡·学校 → 郑州 · ≈90 公里</span></div>
+        <div class="maptools">
+          <div class="seg miniseg" id="baseSeg">
+            <button type="button" data-base="amap" class="on">高德卫星</button>
+            <button type="button" data-base="esri">Esri 卫星</button>
+          </div>
+          <button class="mapbtn" id="mapNow" type="button">回到这一天</button>
+          <button class="mapbtn" id="mapFit" type="button">全程</button>
+        </div>
+      </div>
+      <div class="maphint">滚轮或双指缩放 · 拖动平移 · 影像版权归 高德 / Esri 所有</div>
+    </div>
+  </section>
+
+  <section class="sec" id="mountains">
+    <div class="sec-head">
+      <p class="sec-eyebrow">Climbs</p>
+      <h2 class="sec-title">翻过的山</h2>
+      <p class="sec-desc">按 318 沿线驿站路线图补齐后，这一路一共翻过十三座垭口。点任意一座，跳到那天的日记。</p>
+    </div>
+    <div class="mtsum" id="mtSum"></div>
+    <div class="mts" id="mts"></div>
+  </section>
+
+  <section class="sec" id="feeling">
+    <div class="sec-head">
+      <p class="sec-eyebrow">After</p>
+      <h2 class="sec-title">感悟</h2>
+      <p class="sec-desc">骑完以后，坐在拉萨的房间里写下来的话。</p>
+    </div>
+    <article class="prose prose-lg" id="feelingText"></article>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="foot-in">
+    <p class="foot-line">三十八天，三千六百五十公里。</p>
+    <p class="foot-meta">周长冉 · 2026 夏 · 新乡 → 拉萨</p>
+  </div>
+</footer>
+
+<div class="lb" id="lb" aria-hidden="true" role="dialog" aria-label="照片">
+  <button class="lb-x" id="lbX" type="button" aria-label="关闭">✕</button>
+  <button class="lb-p" id="lbP" type="button" aria-label="上一张">‹</button>
+  <button class="lb-n" id="lbN" type="button" aria-label="下一张">›</button>
+  <img id="lbImg" alt="">
+  <div class="lb-cap"><span id="lbDate"></span><span id="lbText"></span><span id="lbCount"></span></div>
+</div>
+
+<noscript><p style="padding:40px;text-align:center;color:#6e6e73">这个页面需要开启 JavaScript 才能显示完整的骑行日记。</p></noscript>
+
+<script src="assets/vendor/leaflet/leaflet.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
